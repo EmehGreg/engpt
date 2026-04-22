@@ -7,7 +7,6 @@ import {
   HelpCircle,
   Home,
   Menu,
-  Plus,
   Search,
   Settings,
   Timer,

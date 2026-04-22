@@ -3,7 +3,6 @@ import {
   CreditCard,
   Menu,
   Puzzle,
-  Settings,
   Shield,
   SlidersHorizontal,
   User,

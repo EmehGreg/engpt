@@ -4,15 +4,12 @@ import {
   ArrowUpRight,
   Edit3,
   FileText,
-  FunctionSquare,
   Mic,
   Paperclip,
   ScanText,
   Send,
   Settings,
   Sigma,
-  Terminal,
-  Bot,
 } from "lucide-react";
 
 export function AssistantPage() {

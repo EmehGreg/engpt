@@ -3,7 +3,6 @@ import {
   Activity,
   BarChart3,
   Bot,
-  ChevronRight,
   Cpu,
   FileText,
   Flame,

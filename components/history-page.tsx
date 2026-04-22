@@ -11,7 +11,6 @@ import {
   History,
   Home,
   Menu,
-  Plus,
   Search,
   Settings,
   ShieldCheck,
