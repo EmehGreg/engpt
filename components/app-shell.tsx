@@ -27,7 +27,7 @@ export function AppShell({ title, children }: AppShellProps) {
         </div>
 
         <aside className="hidden border-l border-slate-700/30 bg-[#181c22] lg:block">
-          <div className="sticky top-12 h-[calc(100vh-3rem)] overflow-auto p-5">
+          <div className="hide-scrollbar sticky top-12 h-[calc(100vh-3rem)] overflow-auto p-5">
             <RightRail />
           </div>
         </aside>

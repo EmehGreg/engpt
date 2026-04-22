@@ -1,5 +1,10 @@
-import { HistoryPage } from "@/components/history-page"; 
+import { AppShell } from "@/components/app-shell";
+import { HistoryPage } from "@/components/history-page";
 
 export default function HistoryRoute() {
-  return <HistoryPage />;
+  return (
+    <AppShell title="History">
+      <HistoryPage />
+    </AppShell>
+  );
 }
