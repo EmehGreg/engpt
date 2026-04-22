@@ -1,5 +1,10 @@
+import { AppShell } from "@/components/app-shell";
 import { SecurityPage } from "@/components/security-page";
 
 export default function SecurityRoute() {
-  return <SecurityPage />;
+  return (
+    <AppShell title="Security">
+      <SecurityPage />
+    </AppShell>
+  );
 }
