@@ -2,19 +2,21 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { useMemo, useState } from "react";
+import { useState } from "react";
 import {
   BarChart3,
   Bot,
   Calculator,
   ChevronDown,
   ChevronRight,
+  CreditCard,
   HelpCircle,
   History,
   Home,
+  Puzzle,
   Settings,
   Shield,
-  Terminal,
+  SlidersHorizontal,
   User,
   X,
 } from "lucide-react";
@@ -24,23 +26,37 @@ type SidebarProps = {
   setMobileOpen: (open: boolean) => void;
 };
 
-const navItems = [
+type NavChild = {
+  label: string;
+  href: string;
+  icon: React.ComponentType<{ className?: string }>;
+};
+
+type NavItem = {
+  label: string;
+  href: string;
+  icon: React.ComponentType<{ className?: string }>;
+  children?: NavChild[];
+};
+
+const navItems: NavItem[] = [
   { label: "Dashboard", href: "/dashboard", icon: Home },
   { label: "Calculators", href: "/calculators", icon: Calculator },
-  {
-    label: "AI Assistant",
-    href: "/assistant",
-    icon: Bot,
-    children: [
-      { label: "Workspace", href: "/assistant?tab=workspace", icon: Terminal },
-      { label: "Intelligence", href: "/assistant?tab=intelligence", icon: Bot },
-      { label: "Vault", href: "/assistant?tab=vault", icon: Shield },
-      { label: "Settings", href: "/assistant?tab=settings", icon: Settings },
-    ],
-  },
+  { label: "AI Assistant", href: "/assistant", icon: Bot },
   { label: "History", href: "/history", icon: History },
   { label: "Analytics", href: "/analytics", icon: BarChart3 },
-  { label: "Settings", href: "/settings/user", icon: Settings },
+  {
+    label: "Settings",
+    href: "/settings/user",
+    icon: Settings,
+    children: [
+      { label: "Profile", href: "/settings/user", icon: User },
+      { label: "Preferences", href: "/settings/preferences", icon: SlidersHorizontal },
+      { label: "Security", href: "/settings/security", icon: Shield },
+      { label: "Integrations", href: "/settings/integrations", icon: Puzzle },
+      { label: "Billing", href: "/settings/billing", icon: CreditCard },
+    ],
+  },
 ];
 
 const footerItems = [
@@ -53,22 +69,23 @@ function isActive(pathname: string, href: string) {
   return pathname === href || pathname.startsWith(`${href}/`);
 }
 
+function isSettingsRoute(pathname: string) {
+  return pathname.startsWith("/settings");
+}
+
 export function Sidebar({ mobileOpen, setMobileOpen }: SidebarProps) {
   const pathname = usePathname();
 
-  const aiSectionActive = pathname.startsWith("/assistant");
-
   const [openGroups, setOpenGroups] = useState<Record<string, boolean>>({
-    "/assistant": true,
+    "/settings/user": true,
   });
 
-  const resolvedOpenGroups: Record<string, boolean> = useMemo(
-    () => ({
-      ...openGroups,
-      "/assistant": aiSectionActive || openGroups["/assistant"],
-    }),
-    [aiSectionActive, openGroups]
-  );
+  const isGroupOpen = (href: string) => {
+    if (href === "/settings/user") {
+      return isSettingsRoute(pathname) || !!openGroups[href];
+    }
+    return !!openGroups[href];
+  };
 
   return (
     <>
@@ -103,12 +120,13 @@ export function Sidebar({ mobileOpen, setMobileOpen }: SidebarProps) {
             </button>
           </div>
 
-          <nav className="mt-4 flex-1">
+          <nav className="mt-4 flex-1 overflow-y-auto hide-scrollbar">
             {navItems.map((item) => {
               const Icon = item.icon;
-              const active = isActive(pathname, item.href);
               const hasChildren = !!item.children?.length;
-              const expanded = resolvedOpenGroups[item.href];
+              const active = hasChildren
+                ? item.children!.some((child) => isActive(pathname, child.href))
+                : isActive(pathname, item.href);
 
               if (!hasChildren) {
                 return (
@@ -128,6 +146,8 @@ export function Sidebar({ mobileOpen, setMobileOpen }: SidebarProps) {
                 );
               }
 
+              const expanded = isGroupOpen(item.href);
+
               return (
                 <div key={item.href}>
                   <button
@@ -135,7 +155,7 @@ export function Sidebar({ mobileOpen, setMobileOpen }: SidebarProps) {
                     onClick={() =>
                       setOpenGroups((prev) => ({
                         ...prev,
-                        [item.href]: !resolvedOpenGroups[item.href],
+                        [item.href]: !expanded,
                       }))
                     }
                     className={`flex w-full items-center justify-between px-4 py-3 text-left text-xs font-medium uppercase tracking-tight transition ${
@@ -158,13 +178,9 @@ export function Sidebar({ mobileOpen, setMobileOpen }: SidebarProps) {
 
                   {expanded && (
                     <div className="ml-6 border-l border-slate-700/20 pl-3">
-                      {item.children?.map((child) => {
+                      {item.children!.map((child) => {
                         const ChildIcon = child.icon;
-                        const childActive =
-                          pathname === "/assistant" &&
-                          ((typeof window !== "undefined" &&
-                            window.location.search === child.href.replace("/assistant", "")) ||
-                            child.href.includes("intelligence"));
+                        const childActive = isActive(pathname, child.href);
 
                         return (
                           <Link

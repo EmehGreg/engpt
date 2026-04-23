@@ -1,6 +1,5 @@
 import {
   Activity,
-  BarChart3,
   Database,
   Timer,
   TrendingUp,
