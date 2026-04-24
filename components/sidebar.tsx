@@ -19,6 +19,7 @@ import {
   SlidersHorizontal,
   User,
   X,
+  Database
 } from "lucide-react";
 
 type SidebarProps = {
@@ -43,6 +44,7 @@ const navItems: NavItem[] = [
   { label: "Dashboard", href: "/dashboard", icon: Home },
   { label: "Calculators", href: "/calculators", icon: Calculator },
   { label: "AI Assistant", href: "/assistant", icon: Bot },
+  { label: "Data Library", href: "/library", icon: Database },
   { label: "History", href: "/history", icon: History },
   { label: "Analytics", href: "/analytics", icon: BarChart3 },
   {

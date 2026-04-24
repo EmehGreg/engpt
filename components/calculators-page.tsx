@@ -1,231 +1,168 @@
-"use client";
-
-import { useMemo, useState } from "react";
+import Link from "next/link";
 import {
-  FileText,
+  ArrowRight,
+  Beaker,
+  Building2,
+  Droplets,
   FlaskConical,
-  Gauge,
+  Plus,
+  Ruler,
   Sigma,
   Waves,
+  Zap,
 } from "lucide-react";
 
-const thoughtCards = [
+const categories = [
+  { label: "Mechanical", icon: Sigma, active: false },
+  { label: "Electrical", icon: Zap, active: false },
+  { label: "Civil Engineering", icon: Building2, active: true },
+  { label: "Chemical", icon: FlaskConical, active: false },
+];
+
+const tools = [
   {
-    title: "Calculation: Reynolds Number",
-    tone: "border-sky-300/40 text-sky-300",
-    body: [
-      "Re = (ρ * v * D) / μ",
-      "Re = (998 kg/m³ * 3 m/s * 0.05 m) / 0.001002 Pa·s",
-      "Re = 149,401.20",
-      "Status: Fully Turbulent Flow (Re > 4000)",
-    ],
+    title: "Fluid Dynamics",
+    description: "Analyze fluid flow, pressure drops, and pipe systems.",
+    icon: Waves,
+    href: "/calculators/fluid-dynamics",
   },
   {
-    title: "Assumption: Pipe Roughness",
-    tone: "border-amber-300/40 text-amber-300",
-    body: [
-      'Pipe material identified as "Steel".',
-      "Defaulting to commercial steel roughness value of 0.046 mm.",
-      "Override available for alternate surfaces.",
-    ],
+    title: "Reynolds Number",
+    description: "Calculate flow regimes for pipes and open channels.",
+    icon: Sigma,
+    href: "/calculators/fluid-dynamics",
   },
   {
-    title: "Recommendation: Pressure Drop",
-    tone: "border-emerald-400/40 text-emerald-400",
-    body: [
-      "ΔP = f * (L/D) * (ρ * v² / 2)",
-      "Estimated: 29.2 kPa per 20.0 m segment",
-      "Suggested next step: sensitivity analysis.",
-    ],
+    title: "Hydraulic Flow",
+    description: "Manning equation for open-channel flow velocity analysis.",
+    icon: Droplets,
+    href: "/calculators/fluid-dynamics",
+  },
+  {
+    title: "Retaining Wall",
+    description: "Stability checks against sliding and overturning moments.",
+    icon: Building2,
+    href: "/calculators/fluid-dynamics",
+  },
+  {
+    title: "Column Buckling",
+    description: "Euler critical-load calculation for slender columns.",
+    icon: Ruler,
+    href: "/calculators/fluid-dynamics",
   },
 ];
 
-type InputProps = {
-  label: string;
-  value: number;
-  setValue: (value: number) => void;
-  unit: string;
-  step?: number;
-  icon: React.ComponentType<{ className?: string }>;
-};
-
-function Input({ label, value, setValue, unit, step = 0.1, icon: Icon }: InputProps) {
-  return (
-    <label className="block">
-      <span className="mb-2 block text-xs font-semibold uppercase tracking-[0.22em] text-slate-500">
-        {label}
-      </span>
-      <div className="flex items-center rounded-xl border border-slate-700/20 bg-[#10141a] px-4 py-3 focus-within:border-sky-300/30">
-        <Icon className="mr-3 h-4 w-4 text-sky-300" />
-        <input
-          type="number"
-          step={step}
-          value={value}
-          onChange={(e) => setValue(Number(e.target.value))}
-          className="w-full bg-transparent text-lg font-semibold text-slate-100 outline-none"
-        />
-        <span className="text-sm font-medium text-cyan-300">{unit}</span>
-      </div>
-    </label>
-  );
-}
-
 export function CalculatorsPage() {
-  const [velocity, setVelocity] = useState(3);
-  const [diameterMm, setDiameterMm] = useState(50);
-  const [lengthM, setLengthM] = useState(20);
-  const [density, setDensity] = useState(998);
-  const [viscosity, setViscosity] = useState(0.001002);
-
-  const calc = useMemo(() => {
-    const diameterMeters = diameterMm / 1000;
-    const area = (Math.PI * diameterMeters ** 2) / 4;
-    const reynolds = (density * velocity * diameterMeters) / viscosity;
-    const frictionFactor = 0.021;
-    const pressureDrop =
-      frictionFactor * (lengthM / diameterMeters) * ((density * velocity ** 2) / 2);
-    const flowRate = area * velocity;
-
-    return {
-      reynolds,
-      frictionFactor,
-      pressureDrop,
-      flowRate,
-      regime: reynolds >= 4000 ? "Turbulent" : reynolds > 2300 ? "Transitional" : "Laminar",
-    };
-  }, [velocity, diameterMm, lengthM, density, viscosity]);
-
   return (
-    <div className="space-y-8 p-8">
-      <section className="flex flex-col gap-5 md:flex-row md:items-end md:justify-between">
-        <div className="max-w-3xl">
-          <div className="mb-3 inline-flex items-center gap-2 rounded-full border border-sky-300/20 bg-sky-300/5 px-3 py-1">
-            <Sigma className="h-3.5 w-3.5 text-sky-300" />
-            <span className="font-mono text-[10px] uppercase tracking-widest text-sky-300">
-              Fluid Dynamics Workspace
-            </span>
-          </div>
+    <div className="space-y-10 p-8">
+      <header className="max-w-4xl">
+        <p className="mb-3 font-mono text-[10px] uppercase tracking-widest text-sky-300">
+          Engineering Modules
+        </p>
+        <h1 className="mb-4 text-6xl font-extrabold tracking-tight text-slate-100">
+          Calculators
+        </h1>
+        <p className="max-w-2xl text-lg leading-relaxed text-slate-400">
+          Select a high-precision engineering module before launching a calculator workspace.
+        </p>
+      </header>
 
-          <h1 className="text-4xl font-semibold tracking-tight text-slate-100 sm:text-5xl">
-            Fluid Dynamics Calculator
-          </h1>
-          <p className="mt-3 text-base leading-7 text-slate-400">
-            Interactive engineering calculator with live inputs, computed
-            outputs, and AI-style reasoning traces.
-          </p>
-        </div>
-
-        <div className="rounded-xl bg-sky-300/10 px-4 py-3 text-sm font-medium text-sky-300">
-          AI Sync Active
-        </div>
-      </section>
-
-      <div className="grid grid-cols-1 gap-6 xl:grid-cols-12">
-        <div className="rounded-2xl border border-slate-700/30 bg-[#161b22] p-6 xl:col-span-7">
-          <div className="mb-6 flex items-center justify-between">
-            <h3 className="text-lg font-semibold tracking-tight text-slate-100">
-              Input Parameters
+      <section className="overflow-hidden rounded-2xl border border-slate-700/30 bg-[#161b22]">
+        <div className="grid grid-cols-1 lg:grid-cols-12">
+          <aside className="border-b border-slate-700/30 bg-[#10141a] p-6 lg:col-span-3 lg:border-b-0 lg:border-r">
+            <h3 className="mb-6 px-2 text-[10px] font-bold uppercase tracking-[0.18em] text-slate-500">
+              Categories
             </h3>
-            <span className="rounded-full bg-[#10141a] px-3 py-1 text-xs font-medium text-slate-500">
-              RE-882-FX
-            </span>
-          </div>
 
-          <div className="grid grid-cols-1 gap-5 md:grid-cols-2">
-            <Input
-              label="Flow velocity"
-              value={velocity}
-              setValue={setVelocity}
-              unit="m/s"
-              icon={Waves}
-            />
-            <Input
-              label="Pipe diameter"
-              value={diameterMm}
-              setValue={setDiameterMm}
-              unit="mm"
-              icon={Gauge}
-            />
-            <Input
-              label="Pipe length"
-              value={lengthM}
-              setValue={setLengthM}
-              unit="m"
-              icon={FileText}
-            />
-            <Input
-              label="Density"
-              value={density}
-              setValue={setDensity}
-              unit="kg/m³"
-              icon={FlaskConical}
-            />
-            <div className="md:col-span-2">
-              <Input
-                label="Dynamic viscosity"
-                value={viscosity}
-                setValue={setViscosity}
-                unit="Pa·s"
-                step={0.000001}
-                icon={Sigma}
-              />
+            <div className="space-y-2">
+              {categories.map((category) => {
+                const Icon = category.icon;
+
+                return (
+                  <button
+                    key={category.label}
+                    className={`flex w-full items-center gap-3 rounded-xl px-4 py-3 text-left text-sm transition ${
+                      category.active
+                        ? "bg-sky-300/10 font-bold text-sky-300"
+                        : "text-slate-400 hover:bg-white/5 hover:text-slate-100"
+                    }`}
+                  >
+                    <Icon className="h-5 w-5" />
+                    {category.label}
+                  </button>
+                );
+              })}
             </div>
-          </div>
-        </div>
+          </aside>
 
-        <div className="rounded-2xl border border-slate-700/30 bg-[#161b22] p-6 xl:col-span-5">
-          <h3 className="text-lg font-semibold tracking-tight text-slate-100">
-            Calculated Results
-          </h3>
+          <main className="p-6 lg:col-span-9 lg:p-10">
+            <div className="mb-10 flex flex-col gap-4 md:flex-row md:items-end md:justify-between">
+              <div>
+                <h2 className="text-3xl font-bold tracking-tight text-slate-100">
+                  Civil Engineering Tools
+                </h2>
+                <p className="mt-1 text-sm text-slate-400">
+                  Structural, hydraulic, and pipe-flow analysis modules.
+                </p>
+              </div>
 
-          <div className="mt-5 space-y-3">
-            {[
-              ["Flow regime", calc.regime],
-              ["Reynolds number", calc.reynolds.toLocaleString(undefined, { maximumFractionDigits: 2 })],
-              ["Friction factor", calc.frictionFactor.toFixed(3)],
-              ["Pressure drop", `${(calc.pressureDrop / 1000).toFixed(2)} kPa`],
-              ["Volumetric flow", `${calc.flowRate.toFixed(4)} m³/s`],
-            ].map(([label, value]) => (
-              <div
-                key={label}
-                className="flex items-center justify-between rounded-xl border border-slate-700/20 bg-[#10141a] px-4 py-4"
-              >
-                <span className="text-sm text-slate-500">{label}</span>
-                <span className="font-mono text-sm font-semibold text-sky-300">
-                  {value}
+              <button className="inline-flex items-center gap-2 text-sm font-semibold text-sky-300 hover:underline">
+                View all Civil tools
+                <ArrowRight className="h-4 w-4" />
+              </button>
+            </div>
+
+            <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 xl:grid-cols-3">
+              {tools.map((tool) => {
+                const Icon = tool.icon;
+
+                return (
+                  <Link
+                    key={tool.title}
+                    href={tool.href}
+                    className="group rounded-2xl border border-slate-700/20 bg-[#10141a] p-6 transition hover:border-sky-300/30 hover:bg-[#1b2129]"
+                  >
+                    <div className="mb-5 flex h-12 w-12 items-center justify-center rounded-xl bg-sky-300/10 text-sky-300 transition group-hover:bg-sky-300 group-hover:text-[#002c37]">
+                      <Icon className="h-6 w-6" />
+                    </div>
+                    <h4 className="mb-2 font-bold text-slate-100">{tool.title}</h4>
+                    <p className="text-sm leading-6 text-slate-400">{tool.description}</p>
+                  </Link>
+                );
+              })}
+
+              <div className="flex flex-col items-center justify-center rounded-2xl border-2 border-dashed border-slate-700/40 bg-[#10141a] p-6 text-center">
+                <div className="mb-4 flex h-12 w-12 items-center justify-center rounded-full bg-[#1b2129] text-slate-400">
+                  <Plus className="h-5 w-5" />
+                </div>
+                <span className="text-sm font-medium text-slate-400">
+                  Request Custom Module
                 </span>
               </div>
-            ))}
-          </div>
+            </div>
+          </main>
         </div>
 
-        <div className="rounded-2xl border border-slate-700/30 bg-[#161b22] p-6 xl:col-span-12">
-          <div className="mb-5 flex items-center gap-2">
-            <FileText className="h-5 w-5 text-sky-300" />
-            <h3 className="text-lg font-semibold tracking-tight text-slate-100">
-              AI Reasoning Trace
-            </h3>
+        <div className="flex flex-col gap-6 border-t border-slate-700/30 bg-sky-300/10 p-6 md:flex-row md:items-center md:justify-between">
+          <div className="flex items-center gap-4">
+            <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-sky-300 text-[#002c37]">
+              <Beaker className="h-6 w-6" />
+            </div>
+            <div>
+              <span className="block text-[10px] font-bold uppercase tracking-widest text-sky-300">
+                Recently Updated
+              </span>
+              <span className="font-bold text-slate-100">
+                Eurocode 2 Compliance Module
+              </span>
+            </div>
           </div>
 
-          <div className="grid grid-cols-1 gap-4 lg:grid-cols-3">
-            {thoughtCards.map((card) => (
-              <div
-                key={card.title}
-                className={`rounded-2xl border bg-[#10141a] p-5 ${card.tone}`}
-              >
-                <div className="text-sm font-semibold">{card.title}</div>
-                <div className="mt-4 space-y-2">
-                  {card.body.map((line) => (
-                    <p key={line} className="font-mono text-sm leading-6 text-slate-300">
-                      {line}
-                    </p>
-                  ))}
-                </div>
-              </div>
-            ))}
-          </div>
+          <button className="rounded-xl bg-sky-300 px-6 py-3 text-sm font-bold text-[#002c37]">
+            Launch Project Builder
+          </button>
         </div>
-      </div>
+      </section>
     </div>
   );
 }
